@@ -11,22 +11,30 @@ public class Maximum extends Thread {
 
     @Override
     public void run() {
-        int k = getMaxLengthKeyInMap();
+        int v = getMaxFreqValue();
         try {
-            int s = map.get(k);
-            System.out.println(LocalDateTime.now() + " Максимально: " + k + " встречается " + s + " раз");
-        } catch (NullPointerException e) {
+            int k = getKeyByValue(v);
+            System.out.println("Самое частое количество повторений " + k + " (встретилось " + v + " раз)");
+        } catch (NullPointerException ex) {
             try {
                 wait();
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    private int getMaxLengthKeyInMap() {
-        Collection<Integer> values = this.map.values();
-        return values.stream().max((c1, c2) -> c1 - c2).get();
+    private int getMaxFreqValue() {
+        Collection<Integer> collectionOfValues = map.values();
+        return collectionOfValues.stream().max((e1, e2) -> e1 - e2).get();
     }
 
+    private synchronized int getKeyByValue(int value) {
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
+        return 0;
+    }
 }
