@@ -38,7 +38,7 @@ public class Route extends Thread {
         return route;
     }
 
-    private void computeMap() {
+    private synchronized void addOrUpdateMap() {
         map.computeIfPresent(this.countOfAnalyzedSymbols, (k, v) -> v + 1);
         map.putIfAbsent(this.countOfAnalyzedSymbols, 1);
     }
@@ -51,6 +51,6 @@ public class Route extends Thread {
     public void run() {
         this.route = generateRoute();
         this.countOfAnalyzedSymbols = countSymbol();
-        computeMap();
+        addOrUpdateMap();
     }
 }
